@@ -22,7 +22,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ events, members }) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 h-full flex flex-col">
       <div className="flex items-center mb-4">
-        <CalendarIcon className="h-8 w-8 text-purple-500 dark:text-purple-400 mr-3" />
+        <CalendarIcon className="h-8 w-8 text-pink-400 dark:text-pink-300 mr-3" />
         <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Schedule</h2>
       </div>
       <div className="space-y-4 overflow-y-auto pr-2 flex-1">
@@ -33,7 +33,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ events, members }) => {
               <div key={event.id} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-700/50 flex flex-col">
                 <div className="flex items-start w-full">
                   <div className="w-20 text-right mr-4 flex-shrink-0">
-                      <p className="font-bold text-purple-600 dark:text-purple-400">{event.time}</p>
+                      <p className="font-bold text-pink-500 dark:text-pink-300">{event.time}</p>
                       <p className="text-sm text-gray-500 dark:text-gray-400">{event.date}</p>
                   </div>
                   <div>

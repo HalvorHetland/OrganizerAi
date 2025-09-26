@@ -30,7 +30,7 @@ const MemberAvatar: React.FC<MemberAvatarProps> = ({ member, isCurrentUser = fal
                 src={member.profilePictureUrl}
                 alt={member.name}
                 title={member.name}
-                className={`rounded-full object-cover ${sizeClasses[size]} ${isCurrentUser ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-800 ring-blue-500' : 'border-2 border-white dark:border-gray-800'}`}
+                className={`rounded-full object-cover ${sizeClasses[size]} ${isCurrentUser ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-800 ring-pink-400' : 'border-2 border-white dark:border-gray-800'}`}
             />
         );
     }
@@ -44,7 +44,7 @@ const MemberAvatar: React.FC<MemberAvatarProps> = ({ member, isCurrentUser = fal
     return (
         <div 
           title={member.name}
-          className={`rounded-full flex items-center justify-center font-bold ${sizeClasses[size]} ${bgColor} ${darkBgColor} ${textColor} ${darkTextColor} ${isCurrentUser ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-800 ring-blue-500' : 'border-2 border-white dark:border-gray-800'}`}
+          className={`rounded-full flex items-center justify-center font-bold ${sizeClasses[size]} ${bgColor} ${darkBgColor} ${textColor} ${darkTextColor} ${isCurrentUser ? 'ring-2 ring-offset-2 ring-offset-white dark:ring-offset-gray-800 ring-pink-400' : 'border-2 border-white dark:border-gray-800'}`}
         >
             {member.name.charAt(0).toUpperCase()}
         </div>

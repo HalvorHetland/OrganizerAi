@@ -161,8 +161,11 @@ export const sendMessageToGemini = async (history: Content[]): Promise<GenerateC
   const response = await ai.models.generateContent({
     model: "gemini-2.5-flash",
     contents: history,
-    tools: [{ functionDeclarations }],
-    systemInstruction,
+    // Fix: `tools` and `systemInstruction` must be within a `config` object.
+    config: {
+      tools: [{ functionDeclarations }],
+      systemInstruction,
+    },
   });
   return response;
 };

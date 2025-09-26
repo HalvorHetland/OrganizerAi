@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { Assignment, ScheduleEvent, Message, ChatMessage, NotificationSetting, Member } from './types';
 import { sendMessageToGemini } from './services/geminiService';
@@ -125,23 +124,27 @@ const App: React.FC = () => {
 
     switch (name) {
       case 'addAssignment':
-        const assigneeIds = getMemberIdsFromNames(args.assignees || []);
-        if (assigneeIds.length === 0 && (!args.assignees || args.assignees.length === 0)) {
+        // Fix: Cast unknown `args` properties to their expected types.
+        const assigneeIds = getMemberIdsFromNames((args.assignees as string[]) || []);
+        // Fix: Cast unknown `args.assignees` to access `length` property.
+        if (assigneeIds.length === 0 && (!args.assignees || (args.assignees as string[]).length === 0)) {
             assigneeIds.push(currentUser.id); // Default to current user
         }
-        setAssignments(prev => [...prev, { id: Date.now(), name: args.name, dueDate: args.dueDate, isCompleted: false, assignees: assigneeIds }]);
-        functionResultText = `Successfully added assignment: ${args.name}`;
+        // Fix: Cast `args.name` and `args.dueDate` to string.
+        setAssignments(prev => [...prev, { id: Date.now(), name: args.name as string, dueDate: args.dueDate as string, isCompleted: false, assignees: assigneeIds }]);
+        functionResultText = `Successfully added assignment: ${args.name as string}`;
         break;
       case 'completeAssignment':
         let assignmentFound = false;
         setAssignments(prev => prev.map(a => {
-            if (a.name.toLowerCase() === args.name.toLowerCase()) {
+            // Fix: Cast unknown `args.name` to string before calling `toLowerCase`.
+            if (a.name.toLowerCase() === (args.name as string).toLowerCase()) {
                 assignmentFound = true;
                 return { ...a, isCompleted: true };
             }
             return a;
         }));
-        functionResultText = assignmentFound ? `Successfully marked '${args.name}' as complete.` : `Assignment '${args.name}' not found.`;
+        functionResultText = assignmentFound ? `Successfully marked '${args.name as string}' as complete.` : `Assignment '${args.name as string}' not found.`;
         break;
       case 'listAssignments':
         let assignmentsToList = assignments;
@@ -153,25 +156,30 @@ const App: React.FC = () => {
         functionResultText = JSON.stringify(assignmentsToList.map(a => ({...a, assignees: a.assignees.map(id => members.find(m=>m.id === id)?.name)})));
         break;
       case 'addScheduleEvent':
-        const attendeeIds = getMemberIdsFromNames(args.attendees || []);
-         if (attendeeIds.length === 0 && (!args.attendees || args.attendees.length === 0)) {
+        // Fix: Cast unknown `args.attendees` to string array.
+        const attendeeIds = getMemberIdsFromNames((args.attendees as string[]) || []);
+        // Fix: Cast unknown `args.attendees` to access `length` property.
+         if (attendeeIds.length === 0 && (!args.attendees || (args.attendees as string[]).length === 0)) {
             attendeeIds.push(currentUser.id); // Default to current user
         }
-        setScheduleEvents(prev => [...prev, { id: Date.now(), title: args.title, date: args.date, time: args.time, attendees: attendeeIds }]);
-        functionResultText = `Successfully added event: ${args.title}`;
+        // Fix: Cast `args.title`, `args.date`, and `args.time` to string.
+        setScheduleEvents(prev => [...prev, { id: Date.now(), title: args.title as string, date: args.date as string, time: args.time as string, attendees: attendeeIds }]);
+        functionResultText = `Successfully added event: ${args.title as string}`;
         break;
       case 'listScheduleEvents':
         functionResultText = JSON.stringify(scheduleEvents.map(e => ({...e, attendees: e.attendees.map(id => members.find(m=>m.id === id)?.name)})));
         break;
       case 'addMember':
-        functionResultText = handleAddMember(args.name);
+        // Fix: Cast unknown `args.name` to string.
+        functionResultText = handleAddMember(args.name as string);
         break;
       case 'removeMember':
-        const memberToRemove = members.find(m => m.name.toLowerCase() === args.name.toLowerCase());
+        // Fix: Cast unknown `args.name` to string before calling `toLowerCase`.
+        const memberToRemove = members.find(m => m.name.toLowerCase() === (args.name as string).toLowerCase());
         if (memberToRemove) {
             functionResultText = handleRemoveMember(memberToRemove.id);
         } else {
-            functionResultText = `Member '${args.name}' not found.`;
+            functionResultText = `Member '${args.name as string}' not found.`;
         }
         break;
       case 'getStudyTips':
@@ -180,7 +188,8 @@ const App: React.FC = () => {
       case 'addNotificationPreference':
         const { timeValue, timeUnit } = args;
         if ((timeUnit === 'days' || timeUnit === 'hours') && typeof timeValue === 'number') {
-            setNotificationSetting({ timeValue, timeUnit });
+            // Fix: Cast `timeUnit` to the expected literal type.
+            setNotificationSetting({ timeValue, timeUnit: timeUnit as 'days' | 'hours' });
             functionResultText = `Notification preference updated to ${timeValue} ${timeUnit} before deadline.`;
         } else {
             functionResultText = `Invalid time unit or value. Please use 'days' or 'hours'.`;
@@ -259,7 +268,7 @@ const App: React.FC = () => {
       onClick={() => setActivePage(page)}
       className={`flex items-center w-full px-4 py-3 text-left rounded-lg transition-colors duration-200 ${
         activePage === page
-          ? 'bg-blue-600 text-white'
+          ? 'bg-pink-500 text-white'
           : 'text-gray-400 hover:bg-gray-700 hover:text-white'
       }`}
     >
@@ -301,7 +310,7 @@ const App: React.FC = () => {
     <div className="flex h-screen font-sans bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
       <aside className="w-64 bg-gray-800 dark:bg-gray-900/70 text-white flex-col p-4 shadow-2xl hidden md:flex">
         <div className="flex items-center mb-8 px-2">
-          <GraduationCapIcon className="h-10 w-10 text-blue-500" />
+          <GraduationCapIcon className="h-10 w-10 text-pink-400" />
           <h1 className="ml-3 text-2xl font-bold">Organizer AI</h1>
         </div>
         <nav className="flex flex-col space-y-2">
@@ -322,12 +331,12 @@ const App: React.FC = () => {
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => setIsSettingsModalOpen(true)}
-                className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
+                className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400 dark:focus:ring-offset-gray-800"
                 aria-label="Open notification settings"
               >
                 <BellIcon className="h-6 w-6" />
               </button>
-              <button onClick={() => setActivePage('profile')} className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 rounded-full">
+              <button onClick={() => setActivePage('profile')} className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400 rounded-full">
                   <img src={currentUser?.profilePictureUrl} alt="Profile" className="h-9 w-9 rounded-full object-cover" />
               </button>
             </div>
