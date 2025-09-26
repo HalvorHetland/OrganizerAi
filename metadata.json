@@ -1,5 +1,7 @@
 {
   "name": "Student Organizer Chatbot",
   "description": "A helpful AI assistant to help university students manage their schedules, assignments, and study habits using a conversational interface.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [
+    "microphone"
+  ]
 }
