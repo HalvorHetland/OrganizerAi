@@ -1,7 +1,7 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Assignment, ScheduleEvent, Message, ChatMessage, NotificationSetting, Member } from './types';
 import { sendMessageToGemini } from './services/geminiService';
-import { GraduationCapIcon, BellIcon, ChatBubbleIcon, ClipboardCheckIcon, CalendarIcon, UsersIcon, UserIcon } from './components/IconComponents';
+import { GraduationCapIcon, BellIcon, ChatBubbleIcon, ClipboardCheckIcon, CalendarIcon, UsersIcon, UserIcon, MoonIcon, SunIcon } from './components/IconComponents';
 import AssignmentList from './components/AssignmentList';
 import ScheduleView from './components/ScheduleView';
 import ChatInterface from './components/ChatInterface';
@@ -38,6 +38,27 @@ const App: React.FC = () => {
   const [notificationSetting, setNotificationSetting] = useState<NotificationSetting>({ timeValue: 2, timeUnit: 'days' });
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [activePage, setActivePage] = useState<Page>('chat');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || savedTheme === 'light') {
+        return savedTheme;
+    }
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (theme === 'dark') {
+        root.classList.add('dark');
+    } else {
+        root.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+  };
 
   const handleLogin = () => {
       const user = members.find(m => m.id === 1); // Simulate logging in user "Me"
@@ -269,7 +290,7 @@ const App: React.FC = () => {
       className={`flex items-center w-full px-4 py-3 text-left rounded-lg transition-colors duration-200 ${
         activePage === page
           ? 'bg-pink-500 text-white'
-          : 'text-gray-400 hover:bg-gray-700 hover:text-white'
+          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
       }`}
     >
       {React.cloneElement(icon, { className: 'h-6 w-6 mr-4' })}
@@ -308,10 +329,10 @@ const App: React.FC = () => {
 
   return (
     <div className="flex h-screen font-sans bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
-      <aside className="w-64 bg-gray-800 dark:bg-gray-900/70 text-white flex-col p-4 shadow-2xl hidden md:flex">
+      <aside className="w-64 bg-white dark:bg-gray-800 flex-col p-4 shadow-2xl hidden md:flex">
         <div className="flex items-center mb-8 px-2">
           <GraduationCapIcon className="h-10 w-10 text-pink-400" />
-          <h1 className="ml-3 text-2xl font-bold">Organizer AI</h1>
+          <h1 className="ml-3 text-2xl font-bold text-gray-900 dark:text-white">Organizer AI</h1>
         </div>
         <nav className="flex flex-col space-y-2">
           <NavLink page="chat" label="Chat Assistant" icon={<ChatBubbleIcon />} />
@@ -329,6 +350,13 @@ const App: React.FC = () => {
               {pageTitles[activePage]}
             </h2>
             <div className="flex items-center space-x-4">
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400 dark:focus:ring-offset-gray-800"
+                aria-label="Toggle theme"
+              >
+                {theme === 'light' ? <MoonIcon className="h-6 w-6" /> : <SunIcon className="h-6 w-6" />}
+              </button>
               <button
                 onClick={() => setIsSettingsModalOpen(true)}
                 className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400 dark:focus:ring-offset-gray-800"
