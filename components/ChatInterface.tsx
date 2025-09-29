@@ -1,5 +1,6 @@
 
 
+
 // Fix for SpeechRecognition API types not being available in default TypeScript lib
 // This addresses:
 // - "Cannot find name 'SpeechRecognition'"
@@ -65,14 +66,14 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, onSpeak }) => {
   const isModel = message.role === 'model';
   return (
     <div className={`flex items-end gap-2 my-4 group ${isModel ? '' : 'flex-row-reverse'}`}>
-      <div className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${isModel ? 'bg-pink-400' : 'bg-gray-600'}`}>
+      <div className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${isModel ? 'bg-custom-primary-light' : 'bg-gray-600'}`}>
         {isModel ? <BotIcon className="h-6 w-6 text-white" /> : <UserIcon className="h-6 w-6 text-white" />}
       </div>
       <div
         className={`px-4 py-3 rounded-2xl max-w-lg ${
           isModel
             ? 'bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-bl-none'
-            : 'bg-pink-200 text-pink-800 dark:bg-pink-900 dark:text-pink-200 rounded-br-none'
+            : 'bg-custom-secondary text-custom-primary dark:bg-custom-primary/60 dark:text-custom-background-light rounded-br-none'
         }`}
       >
         <p>{message.text}</p>
@@ -80,7 +81,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, onSpeak }) => {
       {isModel && message.text && (
             <button 
                 onClick={() => onSpeak(message.text)}
-                className="p-1.5 rounded-full text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-pink-400 dark:hover:text-pink-300 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="p-1.5 rounded-full text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-custom-primary-light dark:hover:text-custom-secondary opacity-0 group-hover:opacity-100 transition-opacity"
                 aria-label="Read message aloud"
             >
                 <SpeakerIcon className="h-5 w-5" />
@@ -192,7 +193,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
         <button
             onClick={() => setIsAutoTTSOn(!isAutoTTSOn)}
             className={`p-2 rounded-full transition-colors ${
-                isAutoTTSOn ? 'bg-pink-100 dark:bg-pink-900/50 text-pink-500 dark:text-pink-300' : 'text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700'
+                isAutoTTSOn ? 'bg-custom-background-light dark:bg-custom-primary/40 text-custom-primary dark:text-custom-secondary' : 'text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700'
             }`}
             aria-label={isAutoTTSOn ? 'Disable automatic speech' : 'Enable automatic speech'}
         >
@@ -206,11 +207,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
         ))}
         {isLoading && (
             <div className="flex items-start gap-3 my-4">
-                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-pink-400 flex items-center justify-center">
+                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-custom-primary-light flex items-center justify-center">
                     <BotIcon className="h-6 w-6 text-white" />
                 </div>
                 <div className="px-4 py-3 rounded-2xl rounded-bl-none bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white">
-                   <LoaderIcon className="h-6 w-6 text-pink-400" />
+                   <LoaderIcon className="h-6 w-6 text-custom-primary-light" />
                 </div>
             </div>
         )}
@@ -223,7 +224,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
             type="button"
             onClick={handleListen}
             disabled={isLoading || !recognitionRef.current}
-            className={`p-3 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400 transition-colors ${
+            className={`p-3 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-primary-light transition-colors ${
                 isListening ? 'text-red-500 animate-pulse' : 'text-gray-600 dark:text-gray-300'
             }`}
             aria-label="Use microphone"
@@ -235,13 +236,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder={isListening ? "Listening..." : "Ask me to add an assignment..."}
-            className="flex-1 p-3 bg-gray-100 dark:bg-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400 text-gray-900 dark:text-white"
+            className="flex-1 p-3 bg-gray-100 dark:bg-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-custom-primary-light text-gray-900 dark:text-white"
             disabled={isLoading}
           />
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="p-3 bg-pink-500 text-white rounded-full hover:bg-pink-600 disabled:bg-pink-300 dark:disabled:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400 transition-colors"
+            className="p-3 bg-custom-primary text-white rounded-full hover:bg-custom-primary-dark disabled:bg-custom-primary/50 dark:disabled:bg-custom-primary/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-primary-light transition-colors"
           >
             <SendIcon className="h-6 w-6" />
           </button>

@@ -279,6 +279,7 @@ const App: React.FC = () => {
     }
   }, [messages, assignments, scheduleEvents, notificationSetting, members, currentUser]);
 
+  // Sidebar navigation link
   const NavLink: React.FC<{
     page: Page;
     label: string;
@@ -289,11 +290,30 @@ const App: React.FC = () => {
       onClick={() => setActivePage(page)}
       className={`flex items-center w-full px-4 py-3 text-left rounded-lg transition-colors duration-200 ${
         activePage === page
-          ? 'bg-pink-500 text-white'
+          ? 'bg-custom-primary text-white'
           : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
       }`}
     >
       {React.cloneElement(icon, { className: 'h-6 w-6 mr-4' })}
+      <span className="font-medium">{label}</span>
+    </button>
+  );
+
+  // Bottom navigation link for mobile
+  const BottomNavLink: React.FC<{
+    page: Page;
+    label: string;
+    icon: React.ReactElement<{ className?: string }>;
+  }> = ({ page, label, icon }) => (
+    <button
+      onClick={() => setActivePage(page)}
+      className={`flex flex-col items-center justify-center w-full pt-2 pb-1 text-xs transition-colors duration-200 ${
+        activePage === page
+          ? 'text-custom-primary'
+          : 'text-gray-500 dark:text-gray-400 hover:text-custom-primary-light'
+      }`}
+    >
+      {React.cloneElement(icon, { className: 'h-6 w-6 mb-1' })}
       <span className="font-medium">{label}</span>
     </button>
   );
@@ -331,7 +351,7 @@ const App: React.FC = () => {
     <div className="flex h-screen font-sans bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200">
       <aside className="w-64 bg-white dark:bg-gray-800 flex-col p-4 shadow-2xl hidden md:flex">
         <div className="flex items-center mb-8 px-2">
-          <GraduationCapIcon className="h-10 w-10 text-pink-400" />
+          <GraduationCapIcon className="h-10 w-10 text-custom-primary-light" />
           <h1 className="ml-3 text-2xl font-bold text-gray-900 dark:text-white">Organizer AI</h1>
         </div>
         <nav className="flex flex-col space-y-2">
@@ -346,35 +366,46 @@ const App: React.FC = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="bg-white dark:bg-gray-800 shadow-sm p-4 z-10">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
               {pageTitles[activePage]}
             </h2>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400 dark:focus:ring-offset-gray-800"
+                className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-primary-light dark:focus:ring-offset-gray-800"
                 aria-label="Toggle theme"
               >
                 {theme === 'light' ? <MoonIcon className="h-6 w-6" /> : <SunIcon className="h-6 w-6" />}
               </button>
               <button
                 onClick={() => setIsSettingsModalOpen(true)}
-                className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400 dark:focus:ring-offset-gray-800"
+                className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-primary-light dark:focus:ring-offset-gray-800"
                 aria-label="Open notification settings"
               >
                 <BellIcon className="h-6 w-6" />
               </button>
-              <button onClick={() => setActivePage('profile')} className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400 rounded-full">
+              <button onClick={() => setActivePage('profile')} className="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-primary-light rounded-full">
                   <img src={currentUser?.profilePictureUrl} alt="Profile" className="h-9 w-9 rounded-full object-cover" />
               </button>
             </div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-8">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 pb-20 md:pb-8">
           {renderContent()}
         </main>
       </div>
+
+      {/* Bottom Navigation for mobile */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-[0_-1px_3px_rgba(0,0,0,0.1)] z-20">
+          <div className="flex justify-around items-center h-16">
+              <BottomNavLink page="chat" label="Chat" icon={<ChatBubbleIcon />} />
+              <BottomNavLink page="assignments" label="Tasks" icon={<ClipboardCheckIcon />} />
+              <BottomNavLink page="schedule" label="Schedule" icon={<CalendarIcon />} />
+              <BottomNavLink page="group" label="Group" icon={<UsersIcon />} />
+              <BottomNavLink page="profile" label="Profile" icon={<UserIcon />} />
+          </div>
+      </nav>
 
       <NotificationSettingsModal
         isOpen={isSettingsModalOpen}

@@ -54,9 +54,9 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, o
   const FilterButton: React.FC<{filterType: 'all' | 'my' | 'group', label: string}> = ({ filterType, label }) => (
     <button
       onClick={() => setActiveFilter(filterType)}
-      className={`px-3 py-1 text-sm font-medium rounded-md transition-colors ${
+      className={`px-3 py-1 text-sm font-medium rounded-md transition-colors flex-1 sm:flex-initial text-center ${
         activeFilter === filterType 
-        ? 'bg-pink-500 text-white' 
+        ? 'bg-custom-primary text-white' 
         : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
       }`}
     >
@@ -66,20 +66,20 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, o
 
   const emptyStateMessages = {
     all: "No assignments yet. Ask the assistant to add one!",
-    my: "You have no individual assignments.",
+    my: "You have no individual tasks.",
     group: "There are no group assignments yet."
   };
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 h-full flex flex-col">
-      <div className="flex items-center justify-between mb-1">
-         <div className="flex items-center">
-            <ClipboardCheckIcon className="h-8 w-8 text-pink-400 dark:text-pink-300 mr-3" />
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Assignments</h2>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2">
+         <div className="flex items-center mb-3 sm:mb-0">
+            <ClipboardCheckIcon className="h-7 w-7 sm:h-8 sm:w-8 text-custom-primary-light dark:text-custom-secondary mr-3" />
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">Assignments</h2>
          </div>
-         <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700/50 p-1 rounded-lg">
+         <div className="flex items-center space-x-1 sm:space-x-2 bg-gray-100 dark:bg-gray-700/50 p-1 rounded-lg self-stretch sm:self-auto">
             <FilterButton filterType="all" label="All" />
-            <FilterButton filterType="my" label="My Assignments" />
+            <FilterButton filterType="my" label="My Tasks" />
             <FilterButton filterType="group" label="Group" />
          </div>
       </div>
@@ -99,7 +99,7 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, o
                         assignment.isCompleted
                         ? 'bg-green-100 dark:bg-green-900/50'
                         : dueSoon 
-                        ? 'bg-pink-100 dark:bg-pink-900/40 border-l-4 border-pink-400 dark:border-pink-300'
+                        ? 'bg-custom-background-light dark:bg-custom-primary/30 border-l-4 border-custom-primary-light dark:border-custom-secondary'
                         : 'bg-gray-50 dark:bg-gray-700/50'
                     }`}
                 >
@@ -109,7 +109,7 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, o
                                 type="checkbox"
                                 checked={assignment.isCompleted}
                                 onChange={() => onToggleComplete(assignment.id)}
-                                className="h-5 w-5 rounded border-gray-300 text-pink-500 focus:ring-pink-400 cursor-pointer flex-shrink-0"
+                                className="h-5 w-5 rounded border-gray-300 text-custom-primary focus:ring-custom-primary-light cursor-pointer flex-shrink-0"
                             />
                             <div className="ml-4">
                                 <p className={`font-semibold text-gray-900 dark:text-white ${assignment.isCompleted ? 'line-through text-gray-500 dark:text-gray-400' : ''}`}>
@@ -120,7 +120,7 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, o
                                 </p>
                             </div>
                         </div>
-                        {dueSoon && <BellIcon className="h-5 w-5 text-pink-500 dark:text-pink-300 animate-pulse" />}
+                        {dueSoon && <BellIcon className="h-5 w-5 text-custom-primary dark:text-custom-secondary animate-pulse" />}
                     </div>
                     {assignees.length > 0 && (
                         <div className="flex items-center justify-end mt-2 pt-2 border-t border-gray-200 dark:border-gray-700/50">

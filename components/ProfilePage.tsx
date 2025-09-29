@@ -39,8 +39,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateProfile }) => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 md:p-8 h-full">
       <div className="flex items-center mb-6">
-        <UserIcon className="h-8 w-8 text-pink-400 dark:text-pink-300 mr-3" />
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">My Profile</h2>
+        <UserIcon className="h-7 w-7 sm:h-8 sm:w-8 text-custom-primary-light dark:text-custom-secondary mr-3" />
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">My Profile</h2>
       </div>
       
       <form onSubmit={handleSubmit} className="max-w-lg mx-auto">
@@ -50,7 +50,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateProfile }) => {
                  <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute bottom-0 right-0 bg-pink-500 text-white rounded-full p-2 hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400 dark:focus:ring-offset-gray-800"
+                    className="absolute bottom-0 right-0 bg-custom-primary text-white rounded-full p-2 hover:bg-custom-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-primary-light dark:focus:ring-offset-gray-800"
                     aria-label="Change profile picture"
                 >
                     <CameraIcon className="h-5 w-5" />
@@ -75,7 +75,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateProfile }) => {
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full p-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 text-gray-900 dark:text-white"
+                    className="w-full p-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-primary-light text-gray-900 dark:text-white"
                 />
             </div>
             <div>
@@ -87,7 +87,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateProfile }) => {
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 text-gray-900 dark:text-white"
+                    className="w-full p-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-primary-light text-gray-900 dark:text-white"
                 />
             </div>
         </div>
@@ -95,7 +95,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateProfile }) => {
         <div className="mt-8">
           <button
             type="submit"
-            className="w-full px-4 py-3 rounded-lg text-white font-semibold bg-pink-500 hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-400 dark:focus:ring-offset-gray-800"
+            className="w-full px-4 py-3 rounded-lg text-white font-semibold bg-custom-primary hover:bg-custom-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-primary-light dark:focus:ring-offset-gray-800"
           >
             Save Changes
           </button>
