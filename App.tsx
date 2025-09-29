@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Assignment, ScheduleEvent, Message, ChatMessage, NotificationSetting, Member } from './types';
+import { Assignment, ScheduleEvent, Message, ChatMessage, NotificationSettings, Member } from './types';
 import { sendMessageToGemini } from './services/geminiService';
 import { GraduationCapIcon, BellIcon, ChatBubbleIcon, ClipboardCheckIcon, CalendarIcon, UsersIcon, UserIcon, MoonIcon, SunIcon } from './components/IconComponents';
 import AssignmentList from './components/AssignmentList';
@@ -37,7 +37,10 @@ const App: React.FC = () => {
       {role: 'model', text: "Hello! I'm your student organizer assistant. You can add assignments for your group, schedule events, and manage your team members."}
   ]);
   const [isLoading, setIsLoading] = useState(false);
-  const [notificationSetting, setNotificationSetting] = useState<NotificationSetting>({ timeValue: 2, timeUnit: 'days' });
+  const [notificationSettings, setNotificationSettings] = useState<NotificationSettings>({ 
+    assignments: { timeValue: 2, timeUnit: 'days' },
+    schedule: { timeValue: 30, timeUnit: 'minutes' }
+  });
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [activePage, setActivePage] = useState<Page>('chat');
   
@@ -147,11 +150,11 @@ const App: React.FC = () => {
       return `Successfully removed ${memberName} from the group.`;
   };
 
-  const handleSaveNotificationSettings = (newSetting: NotificationSetting) => {
-    setNotificationSetting(newSetting);
+  const handleSaveNotificationSettings = (newSettings: NotificationSettings) => {
+    setNotificationSettings(newSettings);
     setMessages(prev => [...prev, {
       role: 'model',
-      text: `OK! I've updated your notification preferences to ${newSetting.timeValue} ${newSetting.timeUnit} before a deadline.`
+      text: `OK! I've updated your notification preferences.`
     }]);
   };
 
@@ -307,14 +310,20 @@ const App: React.FC = () => {
       case 'getStudyTips':
         functionResultText = "Of course! Here are a few tips: 1. Use the Pomodoro Technique (25 mins study, 5 mins break). 2. Find a dedicated study space. 3. Test yourself with practice questions to reinforce learning.";
         break;
-      case 'addNotificationPreference':
-        const { timeValue, timeUnit } = args;
-        if ((timeUnit === 'days' || timeUnit === 'hours') && typeof timeValue === 'number') {
-            // Fix: Cast `timeUnit` to the expected literal type.
-            setNotificationSetting({ timeValue, timeUnit: timeUnit as 'days' | 'hours' });
-            functionResultText = `Notification preference updated to ${timeValue} ${timeUnit} before deadline.`;
+      case 'setNotificationPreference':
+        const { category, timeValue, timeUnit } = args;
+        const validTimeUnits = ['days', 'hours', 'minutes'];
+        if ( (category === 'assignments' || category === 'schedule') &&
+             validTimeUnits.includes(timeUnit as string) && 
+             typeof timeValue === 'number') 
+        {
+            setNotificationSettings(prev => ({
+                ...prev,
+                [category as string]: { timeValue, timeUnit: timeUnit as 'days' | 'hours' | 'minutes' }
+            }));
+            functionResultText = `Notification preference for ${category} updated to ${timeValue} ${timeUnit}.`;
         } else {
-            functionResultText = `Invalid time unit or value. Please use 'days' or 'hours'.`;
+            functionResultText = `Invalid category, time unit, or value provided.`;
         }
         break;
       default:
@@ -378,7 +387,7 @@ const App: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [messages, assignments, scheduleEvents, notificationSetting, members, currentUser]);
+  }, [messages, assignments, scheduleEvents, notificationSettings, members, currentUser]);
 
   // Sidebar navigation link
   const NavLink: React.FC<{
@@ -428,7 +437,7 @@ const App: React.FC = () => {
             members={members} 
             onToggleComplete={handleToggleAssignment} 
             onDeleteAssignment={handleDeleteAssignment} 
-            notificationSetting={notificationSetting} 
+            notificationTime={notificationSettings.assignments} 
             currentUserId={currentUser.id}
             onAdd={handleOpenAddAssignmentModal}
             onEdit={handleOpenEditAssignmentModal}
@@ -440,6 +449,7 @@ const App: React.FC = () => {
             onDeleteEvent={handleDeleteScheduleEvent} 
             onAdd={handleOpenAddScheduleModal}
             onEdit={handleOpenEditScheduleModal}
+            notificationTime={notificationSettings.schedule}
         />;
       case 'group':
         return <GroupMembers members={members} onAddMember={handleAddMember} onRemoveMember={handleRemoveMember} />;
@@ -527,7 +537,7 @@ const App: React.FC = () => {
         isOpen={isSettingsModalOpen}
         onClose={() => setIsSettingsModalOpen(false)}
         onSave={handleSaveNotificationSettings}
-        currentSetting={notificationSetting}
+        currentSettings={notificationSettings}
       />
         <AssignmentModal
             isOpen={isAssignmentModalOpen}

@@ -1,37 +1,49 @@
 import React, { useState, useEffect } from 'react';
-import { NotificationSetting } from '../types';
+import { NotificationSettings } from '../types';
 import { BellIcon, CloseIcon } from './IconComponents';
 
 interface NotificationSettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (newSetting: NotificationSetting) => void;
-  currentSetting: NotificationSetting;
+  onSave: (newSettings: NotificationSettings) => void;
+  currentSettings: NotificationSettings;
 }
 
 const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
   isOpen,
   onClose,
   onSave,
-  currentSetting,
+  currentSettings,
 }) => {
-  const [timeValue, setTimeValue] = useState(currentSetting.timeValue);
-  const [timeUnit, setTimeUnit] = useState(currentSetting.timeUnit);
+  const [settings, setSettings] = useState(currentSettings);
 
   useEffect(() => {
     if (isOpen) {
-        setTimeValue(currentSetting.timeValue);
-        setTimeUnit(currentSetting.timeUnit);
+        setSettings(currentSettings);
     }
-  }, [currentSetting, isOpen]);
+  }, [currentSettings, isOpen]);
 
   if (!isOpen) {
     return null;
   }
 
   const handleSave = () => {
-    onSave({ timeValue: Number(timeValue), timeUnit });
+    onSave(settings);
     onClose();
+  };
+
+  const handleAssignmentValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSettings(prev => ({ ...prev, assignments: { ...prev.assignments, timeValue: Number(e.target.value) }}));
+  };
+  const handleAssignmentUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSettings(prev => ({ ...prev, assignments: { ...prev.assignments, timeUnit: e.target.value as 'days' | 'hours' }}));
+  };
+  
+  const handleScheduleValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSettings(prev => ({ ...prev, schedule: { ...prev.schedule, timeValue: Number(e.target.value) }}));
+  };
+  const handleScheduleUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSettings(prev => ({ ...prev, schedule: { ...prev.schedule, timeUnit: e.target.value as 'days' | 'hours' | 'minutes' }}));
   };
 
   return (
@@ -62,31 +74,57 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
           </button>
         </div>
         
-        <p className="text-gray-600 dark:text-gray-300 mb-6">
-          Set how far in advance you want to be reminded about assignment deadlines.
-        </p>
-
-        <div className="space-y-4">
-          <label className="block">
-            <span className="text-gray-700 dark:text-gray-300 font-medium">Remind me before deadline:</span>
-            <div className="flex items-center mt-2 space-x-3">
-              <input
-                type="number"
-                value={timeValue}
-                onChange={(e) => setTimeValue(Number(e.target.value))}
-                min="1"
-                className="w-24 p-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-primary-light text-gray-900 dark:text-white"
-              />
-              <select
-                value={timeUnit}
-                onChange={(e) => setTimeUnit(e.target.value as 'days' | 'hours')}
-                className="p-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-primary-light text-gray-900 dark:text-white"
-              >
-                <option value="days">Days</option>
-                <option value="hours">Hours</option>
-              </select>
+        <div className="space-y-6">
+          {/* Assignment Settings */}
+          <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+             <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Assignment Deadlines</h3>
+             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                Set when to be reminded about assignment deadlines.
+             </p>
+             <div className="flex items-center mt-2 space-x-3">
+                <input
+                  type="number"
+                  value={settings.assignments.timeValue}
+                  onChange={handleAssignmentValueChange}
+                  min="1"
+                  className="w-24 p-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-primary-light text-gray-900 dark:text-white"
+                />
+                <select
+                  value={settings.assignments.timeUnit}
+                  onChange={handleAssignmentUnitChange}
+                  className="p-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-primary-light text-gray-900 dark:text-white"
+                >
+                  <option value="days">Days</option>
+                  <option value="hours">Hours</option>
+                </select>
             </div>
-          </label>
+          </div>
+          
+           {/* Schedule Settings */}
+          <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+             <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Schedule Events</h3>
+             <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                Set when to be reminded about upcoming events.
+             </p>
+             <div className="flex items-center mt-2 space-x-3">
+                <input
+                  type="number"
+                  value={settings.schedule.timeValue}
+                  onChange={handleScheduleValueChange}
+                  min="1"
+                  className="w-24 p-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-primary-light text-gray-900 dark:text-white"
+                />
+                <select
+                  value={settings.schedule.timeUnit}
+                  onChange={handleScheduleUnitChange}
+                  className="p-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-primary-light text-gray-900 dark:text-white"
+                >
+                  <option value="days">Days</option>
+                  <option value="hours">Hours</option>
+                  <option value="minutes">Minutes</option>
+                </select>
+            </div>
+          </div>
         </div>
 
         <div className="mt-8 flex justify-end space-x-4">

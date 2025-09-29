@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Assignment, NotificationSetting, Member } from '../types';
+import { Assignment, NotificationTime, Member } from '../types';
 import { ClipboardCheckIcon, BellIcon, TrashIcon, PlusIcon, PencilIcon } from './IconComponents';
 import MemberAvatar from './MemberAvatar';
 
@@ -8,13 +8,13 @@ interface AssignmentListProps {
   members: Member[];
   onToggleComplete: (id: number) => void;
   onDeleteAssignment: (id: number) => void;
-  notificationSetting: NotificationSetting;
+  notificationTime: NotificationTime;
   currentUserId: number;
   onAdd: () => void;
   onEdit: (assignment: Assignment) => void;
 }
 
-const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, onToggleComplete, onDeleteAssignment, notificationSetting, currentUserId, onAdd, onEdit }) => {
+const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, onToggleComplete, onDeleteAssignment, notificationTime, currentUserId, onAdd, onEdit }) => {
   const [activeFilter, setActiveFilter] = useState<'all' | 'my' | 'group'>('all');
   
   const sortedAssignments = useMemo(() => 
@@ -32,7 +32,7 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, o
   }, [sortedAssignments, activeFilter, currentUserId]);
 
   const isDueSoon = (dueDateStr: string): boolean => {
-    if (!notificationSetting) return false;
+    if (!notificationTime) return false;
 
     const dueDate = new Date(dueDateStr);
     const now = new Date();
@@ -42,8 +42,8 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, o
     const diffMillis = dueDate.getTime() - now.getTime();
     if (diffMillis < 0) return false;
 
-    let thresholdMillis = notificationSetting.timeValue * 60 * 60 * 1000;
-    if (notificationSetting.timeUnit === 'days') {
+    let thresholdMillis = notificationTime.timeValue * 60 * 60 * 1000;
+    if (notificationTime.timeUnit === 'days') {
       thresholdMillis *= 24;
     }
 
@@ -95,7 +95,7 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, o
       </div>
        <div className="text-xs text-gray-500 dark:text-gray-400 mb-4 flex items-center pl-1">
           <BellIcon className="h-4 w-4 mr-2"/> 
-          <span>Notifications set for <b>{notificationSetting.timeValue} {notificationSetting.timeUnit}</b> before due date.</span>
+          <span>Notifications set for <b>{notificationTime.timeValue} {notificationTime.timeUnit}</b> before due date.</span>
        </div>
       <div className="space-y-4 overflow-y-auto pr-2 flex-1">
         {filteredAssignments.length > 0 ? (

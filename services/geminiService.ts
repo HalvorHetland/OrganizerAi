@@ -154,21 +154,25 @@ const functionDeclarations: FunctionDeclaration[] = [
     },
   },
   {
-    name: "addNotificationPreference",
+    name: "setNotificationPreference",
     parameters: {
       type: Type.OBJECT,
-      description: "Sets the user's preference for when to be notified about an approaching deadline.",
+      description: "Sets the user's preference for when to be notified about an approaching deadline for assignments or schedule events.",
       properties: {
+        category: {
+          type: Type.STRING,
+          description: "The category for the notification. Must be either 'assignments' or 'schedule'."
+        },
         timeValue: {
           type: Type.NUMBER,
           description: "The numeric value for the time before a deadline, e.g., 2.",
         },
         timeUnit: {
           type: Type.STRING,
-          description: "The unit of time. Can be 'days' or 'hours'.",
+          description: "The unit of time. Can be 'days', 'hours', or 'minutes'.",
         },
       },
-      required: ["timeValue", "timeUnit"],
+      required: ["category", "timeValue", "timeUnit"],
     },
   }
 ];

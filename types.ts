@@ -26,10 +26,16 @@ export interface ScheduleEvent {
   attendees: number[]; // Array of member IDs
 }
 
-export interface NotificationSetting {
+export interface NotificationTime {
   timeValue: number;
-  timeUnit: 'days' | 'hours';
+  timeUnit: 'days' | 'hours' | 'minutes';
 }
+
+export interface NotificationSettings {
+  assignments: NotificationTime;
+  schedule: NotificationTime;
+}
+
 
 export type ChatMessage = {
   role: "user" | "model";
