@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Assignment, NotificationSetting, Member } from '../types';
-import { ClipboardCheckIcon, BellIcon, TrashIcon } from './IconComponents';
+import { ClipboardCheckIcon, BellIcon, TrashIcon, PlusIcon, PencilIcon } from './IconComponents';
 import MemberAvatar from './MemberAvatar';
 
 interface AssignmentListProps {
@@ -10,9 +10,11 @@ interface AssignmentListProps {
   onDeleteAssignment: (id: number) => void;
   notificationSetting: NotificationSetting;
   currentUserId: number;
+  onAdd: () => void;
+  onEdit: (assignment: Assignment) => void;
 }
 
-const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, onToggleComplete, onDeleteAssignment, notificationSetting, currentUserId }) => {
+const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, onToggleComplete, onDeleteAssignment, notificationSetting, currentUserId, onAdd, onEdit }) => {
   const [activeFilter, setActiveFilter] = useState<'all' | 'my' | 'group'>('all');
   
   const sortedAssignments = useMemo(() => 
@@ -77,6 +79,13 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, o
          <div className="flex items-center mb-3 sm:mb-0">
             <ClipboardCheckIcon className="h-7 w-7 sm:h-8 sm:w-8 text-custom-primary-light dark:text-custom-secondary mr-3" />
             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">Assignments</h2>
+            <button
+                onClick={onAdd}
+                className="ml-4 p-1.5 text-white bg-custom-primary hover:bg-custom-primary-dark rounded-full transition-colors"
+                aria-label="Add new assignment"
+            >
+                <PlusIcon className="h-5 w-5" />
+            </button>
          </div>
          <div className="flex items-center space-x-1 sm:space-x-2 bg-gray-100 dark:bg-gray-700/50 p-1 rounded-lg self-stretch sm:self-auto">
             <FilterButton filterType="all" label="All" />
@@ -122,14 +131,23 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, o
                             </div>
                         </div>
                         <div className="flex items-center space-x-2">
-                          {dueSoon && <BellIcon className="h-5 w-5 text-custom-primary dark:text-custom-secondary animate-pulse" />}
-                          <button
-                              onClick={() => onDeleteAssignment(assignment.id)}
-                              className="p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
-                              aria-label={`Delete assignment: ${assignment.name}`}
-                          >
-                              <TrashIcon className="h-5 w-5" />
-                          </button>
+                            {dueSoon && <BellIcon className="h-5 w-5 text-custom-primary dark:text-custom-secondary animate-pulse" />}
+                            <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                                <button
+                                    onClick={() => onEdit(assignment)}
+                                    className="p-1 text-gray-400 hover:text-custom-primary dark:hover:text-custom-secondary rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+                                    aria-label={`Edit assignment: ${assignment.name}`}
+                                >
+                                    <PencilIcon className="h-5 w-5" />
+                                </button>
+                                <button
+                                    onClick={() => onDeleteAssignment(assignment.id)}
+                                    className="p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+                                    aria-label={`Delete assignment: ${assignment.name}`}
+                                >
+                                    <TrashIcon className="h-5 w-5" />
+                                </button>
+                            </div>
                         </div>
                     </div>
                     {assignees.length > 0 && (

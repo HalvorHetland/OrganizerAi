@@ -1,15 +1,17 @@
 import React from 'react';
 import { ScheduleEvent, Member } from '../types';
-import { CalendarIcon, TrashIcon } from './IconComponents';
+import { CalendarIcon, TrashIcon, PlusIcon, PencilIcon } from './IconComponents';
 import MemberAvatar from './MemberAvatar';
 
 interface ScheduleViewProps {
   events: ScheduleEvent[];
   members: Member[];
   onDeleteEvent: (id: number) => void;
+  onAdd: () => void;
+  onEdit: (event: ScheduleEvent) => void;
 }
 
-const ScheduleView: React.FC<ScheduleViewProps> = ({ events, members, onDeleteEvent }) => {
+const ScheduleView: React.FC<ScheduleViewProps> = ({ events, members, onDeleteEvent, onAdd, onEdit }) => {
     const sortedEvents = [...events].sort((a, b) => {
         const dateA = new Date(`${a.date}T${a.time}`);
         const dateB = new Date(`${b.date}T${b.time}`);
@@ -25,6 +27,13 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ events, members, onDeleteEv
       <div className="flex items-center mb-4">
         <CalendarIcon className="h-7 w-7 sm:h-8 sm:w-8 text-custom-primary-light dark:text-custom-secondary mr-3" />
         <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">Schedule</h2>
+        <button
+            onClick={onAdd}
+            className="ml-4 p-1.5 text-white bg-custom-primary hover:bg-custom-primary-dark rounded-full transition-colors"
+            aria-label="Add new event"
+        >
+            <PlusIcon className="h-5 w-5" />
+        </button>
       </div>
       <div className="space-y-4 overflow-y-auto pr-2 flex-1">
         {sortedEvents.length > 0 ? (
@@ -40,13 +49,22 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ events, members, onDeleteEv
                   <div className="flex-grow">
                     <p className="font-semibold text-gray-900 dark:text-white">{event.title}</p>
                   </div>
-                  <button
-                      onClick={() => onDeleteEvent(event.id)}
-                      className="p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
-                      aria-label={`Delete event: ${event.title}`}
-                  >
-                      <TrashIcon className="h-5 w-5" />
-                  </button>
+                   <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                        <button
+                            onClick={() => onEdit(event)}
+                            className="p-1 text-gray-400 hover:text-custom-primary dark:hover:text-custom-secondary rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+                            aria-label={`Edit event: ${event.title}`}
+                        >
+                            <PencilIcon className="h-5 w-5" />
+                        </button>
+                        <button
+                            onClick={() => onDeleteEvent(event.id)}
+                            className="p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
+                            aria-label={`Delete event: ${event.title}`}
+                        >
+                            <TrashIcon className="h-5 w-5" />
+                        </button>
+                    </div>
                 </div>
                 {attendees.length > 0 && (
                   <div className="flex items-center justify-end mt-2 pt-2 border-t border-gray-200 dark:border-gray-700/50">

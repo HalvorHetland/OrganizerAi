@@ -10,6 +10,8 @@ import GroupMembers from './components/GroupMembers';
 import Login from './components/Login';
 import ProfilePage from './components/ProfilePage';
 import { GenerateContentResponse } from '@google/genai';
+import AssignmentModal from './components/AssignmentModal';
+import ScheduleModal from './components/ScheduleModal';
 
 type Page = 'chat' | 'assignments' | 'schedule' | 'group' | 'profile';
 
@@ -38,6 +40,13 @@ const App: React.FC = () => {
   const [notificationSetting, setNotificationSetting] = useState<NotificationSetting>({ timeValue: 2, timeUnit: 'days' });
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [activePage, setActivePage] = useState<Page>('chat');
+  
+  const [isAssignmentModalOpen, setIsAssignmentModalOpen] = useState(false);
+  const [editingAssignment, setEditingAssignment] = useState<Assignment | null>(null);
+
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const [editingScheduleEvent, setEditingScheduleEvent] = useState<ScheduleEvent | null>(null);
+
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark' || savedTheme === 'light') {
@@ -155,6 +164,58 @@ const App: React.FC = () => {
           })
           .filter(Boolean) as number[];
   };
+  
+    // Handlers for manual assignment add/edit
+    const handleOpenAddAssignmentModal = () => {
+        setEditingAssignment(null);
+        setIsAssignmentModalOpen(true);
+    };
+
+    const handleOpenEditAssignmentModal = (assignment: Assignment) => {
+        setEditingAssignment(assignment);
+        setIsAssignmentModalOpen(true);
+    };
+
+    const handleSaveAssignment = (data: Omit<Assignment, 'id' | 'isCompleted'> & { id?: number }) => {
+        if (data.id) { // Editing existing
+            setAssignments(prev => prev.map(a => a.id === data.id ? { ...a, ...data } : a));
+        } else { // Adding new
+            const newAssignment: Assignment = {
+                id: Date.now(),
+                name: data.name,
+                dueDate: data.dueDate,
+                isCompleted: false,
+                assignees: data.assignees,
+            };
+            setAssignments(prev => [...prev, newAssignment]);
+        }
+    };
+
+    // Handlers for manual schedule add/edit
+    const handleOpenAddScheduleModal = () => {
+        setEditingScheduleEvent(null);
+        setIsScheduleModalOpen(true);
+    };
+
+    const handleOpenEditScheduleModal = (event: ScheduleEvent) => {
+        setEditingScheduleEvent(event);
+        setIsScheduleModalOpen(true);
+    };
+
+    const handleSaveScheduleEvent = (data: Omit<ScheduleEvent, 'id'> & { id?: number }) => {
+        if (data.id) { // Editing
+            setScheduleEvents(prev => prev.map(e => e.id === data.id ? { ...e, ...data } : e));
+        } else { // Adding
+            const newEvent: ScheduleEvent = {
+                id: Date.now(),
+                title: data.title,
+                date: data.date,
+                time: data.time,
+                attendees: data.attendees,
+            };
+            setScheduleEvents(prev => [...prev, newEvent]);
+        }
+    };
 
   const processFunctionCall = (response: GenerateContentResponse) => {
     const functionCalls = response.functionCalls;
@@ -362,9 +423,24 @@ const App: React.FC = () => {
     if (!currentUser) return null;
     switch (activePage) {
       case 'assignments':
-        return <AssignmentList assignments={assignments} members={members} onToggleComplete={handleToggleAssignment} onDeleteAssignment={handleDeleteAssignment} notificationSetting={notificationSetting} currentUserId={currentUser.id} />;
+        return <AssignmentList 
+            assignments={assignments} 
+            members={members} 
+            onToggleComplete={handleToggleAssignment} 
+            onDeleteAssignment={handleDeleteAssignment} 
+            notificationSetting={notificationSetting} 
+            currentUserId={currentUser.id}
+            onAdd={handleOpenAddAssignmentModal}
+            onEdit={handleOpenEditAssignmentModal}
+        />;
       case 'schedule':
-        return <ScheduleView events={scheduleEvents} members={members} onDeleteEvent={handleDeleteScheduleEvent} />;
+        return <ScheduleView 
+            events={scheduleEvents} 
+            members={members} 
+            onDeleteEvent={handleDeleteScheduleEvent} 
+            onAdd={handleOpenAddScheduleModal}
+            onEdit={handleOpenEditScheduleModal}
+        />;
       case 'group':
         return <GroupMembers members={members} onAddMember={handleAddMember} onRemoveMember={handleRemoveMember} />;
        case 'profile':
@@ -453,6 +529,20 @@ const App: React.FC = () => {
         onSave={handleSaveNotificationSettings}
         currentSetting={notificationSetting}
       />
+        <AssignmentModal
+            isOpen={isAssignmentModalOpen}
+            onClose={() => setIsAssignmentModalOpen(false)}
+            onSave={handleSaveAssignment}
+            assignmentToEdit={editingAssignment}
+            members={members}
+        />
+        <ScheduleModal
+            isOpen={isScheduleModalOpen}
+            onClose={() => setIsScheduleModalOpen(false)}
+            onSave={handleSaveScheduleEvent}
+            eventToEdit={editingScheduleEvent}
+            members={members}
+        />
     </div>
   );
 };
