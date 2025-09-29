@@ -42,6 +42,20 @@ const functionDeclarations: FunctionDeclaration[] = [
     },
   },
   {
+    name: "deleteAssignment",
+    parameters: {
+      type: Type.OBJECT,
+      description: "Deletes an existing assignment based on its name.",
+      properties: {
+        name: {
+          type: Type.STRING,
+          description: "The name of the assignment to delete.",
+        },
+      },
+      required: ["name"],
+    },
+  },
+  {
     name: "listAssignments",
     parameters: {
       type: Type.OBJECT,
@@ -79,6 +93,20 @@ const functionDeclarations: FunctionDeclaration[] = [
         }
       },
       required: ["title", "date", "time"],
+    },
+  },
+  {
+    name: "deleteScheduleEvent",
+    parameters: {
+      type: Type.OBJECT,
+      description: "Deletes an existing event from the schedule based on its title.",
+      properties: {
+        title: {
+          type: Type.STRING,
+          description: "The title of the event to delete.",
+        },
+      },
+      required: ["title"],
     },
   },
   {
@@ -151,7 +179,7 @@ You are friendly, encouraging, and provide clear, concise information.
 You will have access to tools to manage assignments, schedules, group members, and notification preferences.
 When a user asks to add an assignment or schedule event, they may specify assignees or attendees. If they don't, assume it's for the user who is talking ('Me').
 The group member 'Me' refers to the current user interacting with you.
-When a user asks to add, remove, complete, or list items, use the provided functions.
+When a user asks to add, remove, complete, delete, or list items, use the provided functions.
 When listing assignments, you can filter by 'my', 'group', or 'all'.
 Do not make up information; use the tools to get the real data.
 After performing a function call, confirm the action in a friendly message.

@@ -1,14 +1,15 @@
 import React from 'react';
 import { ScheduleEvent, Member } from '../types';
-import { CalendarIcon } from './IconComponents';
+import { CalendarIcon, TrashIcon } from './IconComponents';
 import MemberAvatar from './MemberAvatar';
 
 interface ScheduleViewProps {
   events: ScheduleEvent[];
   members: Member[];
+  onDeleteEvent: (id: number) => void;
 }
 
-const ScheduleView: React.FC<ScheduleViewProps> = ({ events, members }) => {
+const ScheduleView: React.FC<ScheduleViewProps> = ({ events, members, onDeleteEvent }) => {
     const sortedEvents = [...events].sort((a, b) => {
         const dateA = new Date(`${a.date}T${a.time}`);
         const dateB = new Date(`${b.date}T${b.time}`);
@@ -30,15 +31,22 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ events, members }) => {
           sortedEvents.map((event) => {
             const attendees = getAttendees(event.attendees);
             return (
-              <div key={event.id} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-700/50 flex flex-col">
+              <div key={event.id} className="p-4 rounded-lg bg-gray-50 dark:bg-gray-700/50 flex flex-col group">
                 <div className="flex items-start w-full">
                   <div className="w-20 text-right mr-4 flex-shrink-0">
                       <p className="font-bold text-custom-primary dark:text-custom-secondary">{event.time}</p>
                       <p className="text-sm text-gray-500 dark:text-gray-400">{event.date}</p>
                   </div>
-                  <div>
+                  <div className="flex-grow">
                     <p className="font-semibold text-gray-900 dark:text-white">{event.title}</p>
                   </div>
+                  <button
+                      onClick={() => onDeleteEvent(event.id)}
+                      className="p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+                      aria-label={`Delete event: ${event.title}`}
+                  >
+                      <TrashIcon className="h-5 w-5" />
+                  </button>
                 </div>
                 {attendees.length > 0 && (
                   <div className="flex items-center justify-end mt-2 pt-2 border-t border-gray-200 dark:border-gray-700/50">

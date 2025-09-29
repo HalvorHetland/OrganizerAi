@@ -1,17 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import { Assignment, NotificationSetting, Member } from '../types';
-import { ClipboardCheckIcon, BellIcon } from './IconComponents';
+import { ClipboardCheckIcon, BellIcon, TrashIcon } from './IconComponents';
 import MemberAvatar from './MemberAvatar';
 
 interface AssignmentListProps {
   assignments: Assignment[];
   members: Member[];
   onToggleComplete: (id: number) => void;
+  onDeleteAssignment: (id: number) => void;
   notificationSetting: NotificationSetting;
   currentUserId: number;
 }
 
-const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, onToggleComplete, notificationSetting, currentUserId }) => {
+const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, onToggleComplete, onDeleteAssignment, notificationSetting, currentUserId }) => {
   const [activeFilter, setActiveFilter] = useState<'all' | 'my' | 'group'>('all');
   
   const sortedAssignments = useMemo(() => 
@@ -95,7 +96,7 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, o
             return (
                 <div
                     key={assignment.id}
-                    className={`p-4 rounded-lg flex flex-col transition-all duration-300 ${
+                    className={`p-4 rounded-lg flex flex-col transition-all duration-300 group ${
                         assignment.isCompleted
                         ? 'bg-green-100 dark:bg-green-900/50'
                         : dueSoon 
@@ -120,7 +121,16 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, o
                                 </p>
                             </div>
                         </div>
-                        {dueSoon && <BellIcon className="h-5 w-5 text-custom-primary dark:text-custom-secondary animate-pulse" />}
+                        <div className="flex items-center space-x-2">
+                          {dueSoon && <BellIcon className="h-5 w-5 text-custom-primary dark:text-custom-secondary animate-pulse" />}
+                          <button
+                              onClick={() => onDeleteAssignment(assignment.id)}
+                              className="p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+                              aria-label={`Delete assignment: ${assignment.name}`}
+                          >
+                              <TrashIcon className="h-5 w-5" />
+                          </button>
+                        </div>
                     </div>
                     {assignees.length > 0 && (
                         <div className="flex items-center justify-end mt-2 pt-2 border-t border-gray-200 dark:border-gray-700/50">

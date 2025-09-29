@@ -83,6 +83,30 @@ const App: React.FC = () => {
     );
   };
 
+  const handleDeleteAssignment = (id: number) => {
+    let assignmentName = '';
+    setAssignments(prev => prev.filter(a => {
+        if (a.id === id) {
+            assignmentName = a.name;
+            return false;
+        }
+        return true;
+    }));
+    return `Successfully deleted assignment: ${assignmentName}`;
+  };
+
+  const handleDeleteScheduleEvent = (id: number) => {
+    let eventTitle = '';
+    setScheduleEvents(prev => prev.filter(e => {
+        if (e.id === id) {
+            eventTitle = e.title;
+            return false;
+        }
+        return true;
+    }));
+    return `Successfully deleted event: ${eventTitle}`;
+  };
+
   const handleAddMember = (name: string) => {
     if (name.trim() && !members.find(m => m.name.toLowerCase() === name.toLowerCase())) {
         const newMember: Member = { 
@@ -167,6 +191,14 @@ const App: React.FC = () => {
         }));
         functionResultText = assignmentFound ? `Successfully marked '${args.name as string}' as complete.` : `Assignment '${args.name as string}' not found.`;
         break;
+      case 'deleteAssignment':
+        const assignmentToDelete = assignments.find(a => a.name.toLowerCase() === (args.name as string).toLowerCase());
+        if (assignmentToDelete) {
+            functionResultText = handleDeleteAssignment(assignmentToDelete.id);
+        } else {
+            functionResultText = `Assignment '${args.name as string}' not found.`;
+        }
+        break;
       case 'listAssignments':
         let assignmentsToList = assignments;
         if (args.filter === 'my') {
@@ -186,6 +218,14 @@ const App: React.FC = () => {
         // Fix: Cast `args.title`, `args.date`, and `args.time` to string.
         setScheduleEvents(prev => [...prev, { id: Date.now(), title: args.title as string, date: args.date as string, time: args.time as string, attendees: attendeeIds }]);
         functionResultText = `Successfully added event: ${args.title as string}`;
+        break;
+      case 'deleteScheduleEvent':
+        const eventToDelete = scheduleEvents.find(e => e.title.toLowerCase() === (args.title as string).toLowerCase());
+        if (eventToDelete) {
+            functionResultText = handleDeleteScheduleEvent(eventToDelete.id);
+        } else {
+            functionResultText = `Event '${args.title as string}' not found.`;
+        }
         break;
       case 'listScheduleEvents':
         functionResultText = JSON.stringify(scheduleEvents.map(e => ({...e, attendees: e.attendees.map(id => members.find(m=>m.id === id)?.name)})));
@@ -322,9 +362,9 @@ const App: React.FC = () => {
     if (!currentUser) return null;
     switch (activePage) {
       case 'assignments':
-        return <AssignmentList assignments={assignments} members={members} onToggleComplete={handleToggleAssignment} notificationSetting={notificationSetting} currentUserId={currentUser.id} />;
+        return <AssignmentList assignments={assignments} members={members} onToggleComplete={handleToggleAssignment} onDeleteAssignment={handleDeleteAssignment} notificationSetting={notificationSetting} currentUserId={currentUser.id} />;
       case 'schedule':
-        return <ScheduleView events={scheduleEvents} members={members} />;
+        return <ScheduleView events={scheduleEvents} members={members} onDeleteEvent={handleDeleteScheduleEvent} />;
       case 'group':
         return <GroupMembers members={members} onAddMember={handleAddMember} onRemoveMember={handleRemoveMember} />;
        case 'profile':
