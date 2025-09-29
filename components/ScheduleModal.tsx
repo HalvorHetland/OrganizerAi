@@ -8,9 +8,10 @@ interface ScheduleModalProps {
   onSave: (event: Omit<ScheduleEvent, 'id'> & { id?: number }) => void;
   eventToEdit?: ScheduleEvent | null;
   members: Member[];
+  t: (key: string) => string;
 }
 
-const ScheduleModal: React.FC<ScheduleModalProps> = ({ isOpen, onClose, onSave, eventToEdit, members }) => {
+const ScheduleModal: React.FC<ScheduleModalProps> = ({ isOpen, onClose, onSave, eventToEdit, members, t }) => {
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
@@ -71,7 +72,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ isOpen, onClose, onSave, 
           <div className="flex items-center">
             <CalendarIcon className="h-6 w-6 text-custom-primary-light mr-3" />
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-              {eventToEdit ? 'Edit Event' : 'Add Event'}
+              {eventToEdit ? t('editEventTitle') : t('addEvent')}
             </h2>
           </div>
           <button
@@ -86,7 +87,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ isOpen, onClose, onSave, 
         <form onSubmit={handleSubmit}>
             <div className="space-y-4">
                 <div>
-                    <label htmlFor="event-title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Event Title</label>
+                    <label htmlFor="event-title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('eventTitle')}</label>
                     <input
                         type="text"
                         id="event-title"
@@ -98,7 +99,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ isOpen, onClose, onSave, 
                 </div>
                 <div className="flex space-x-4">
                     <div className="flex-1">
-                        <label htmlFor="event-date" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Date</label>
+                        <label htmlFor="event-date" className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('date')}</label>
                         <input
                             type="date"
                             id="event-date"
@@ -109,7 +110,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ isOpen, onClose, onSave, 
                         />
                     </div>
                     <div className="flex-1">
-                        <label htmlFor="event-time" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Time</label>
+                        <label htmlFor="event-time" className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('time')}</label>
                         <input
                             type="time"
                             id="event-time"
@@ -121,7 +122,7 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ isOpen, onClose, onSave, 
                     </div>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Attendees</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('attendees')}</label>
                     <div className="mt-2 space-y-2 p-2 bg-gray-100 dark:bg-gray-700 rounded-lg max-h-40 overflow-y-auto">
                         {members.map(member => (
                             <div key={member.id} className="flex items-center">
@@ -145,13 +146,13 @@ const ScheduleModal: React.FC<ScheduleModalProps> = ({ isOpen, onClose, onSave, 
                     onClick={onClose}
                     className="px-4 py-2 rounded-lg text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
                 >
-                    Cancel
+                    {t('cancel')}
                 </button>
                 <button
                     type="submit"
                     className="px-4 py-2 rounded-lg text-white bg-custom-primary hover:bg-custom-primary-dark"
                 >
-                    {eventToEdit ? 'Save Changes' : 'Add Event'}
+                    {eventToEdit ? t('saveChangesBtn') : t('addEventBtn')}
                 </button>
             </div>
         </form>

@@ -12,6 +12,8 @@ import ProfilePage from './components/ProfilePage';
 import { GenerateContentResponse } from '@google/genai';
 import AssignmentModal from './components/AssignmentModal';
 import ScheduleModal from './components/ScheduleModal';
+import { translations } from './i18n/translations';
+
 
 type Page = 'chat' | 'assignments' | 'schedule' | 'group' | 'profile';
 
@@ -20,8 +22,8 @@ const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<Member | null>(null);
 
   const [members, setMembers] = useState<Member[]>([
-    { id: 1, name: "Me", email: "me@university.edu", profilePictureUrl: "https://i.pravatar.cc/150?u=me" },
-    { id: 2, name: "Alice", email: "alice@university.edu", profilePictureUrl: "https://i.pravatar.cc/150?u=alice" }
+    { id: 1, name: "Me", email: "me@university.edu", profilePictureUrl: "https://i.pravatar.cc/150?u=me", language: 'en' },
+    { id: 2, name: "Alice", email: "alice@university.edu", profilePictureUrl: "https://i.pravatar.cc/150?u=alice", language: 'en' }
   ]);
 
   const [assignments, setAssignments] = useState<Assignment[]>([
@@ -57,6 +59,11 @@ const App: React.FC = () => {
     }
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
+  
+  const t = useCallback((key: keyof typeof translations.en): string => {
+    const lang = currentUser?.language || 'en';
+    return translations[lang][key] || translations.en[key];
+  }, [currentUser]);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -125,7 +132,8 @@ const App: React.FC = () => {
             id: Date.now(), 
             name, 
             email: `${name.toLowerCase()}@university.edu`,
-            profilePictureUrl: `https://i.pravatar.cc/150?u=${name}`
+            profilePictureUrl: `https://i.pravatar.cc/150?u=${name}`,
+            language: 'en'
         };
         setMembers(prev => [...prev, newMember]);
         return `Successfully added ${name} to the group.`;
@@ -441,6 +449,7 @@ const App: React.FC = () => {
             currentUserId={currentUser.id}
             onAdd={handleOpenAddAssignmentModal}
             onEdit={handleOpenEditAssignmentModal}
+            t={t}
         />;
       case 'schedule':
         return <ScheduleView 
@@ -450,27 +459,28 @@ const App: React.FC = () => {
             onAdd={handleOpenAddScheduleModal}
             onEdit={handleOpenEditScheduleModal}
             notificationTime={notificationSettings.schedule}
+            t={t}
         />;
       case 'group':
-        return <GroupMembers members={members} onAddMember={handleAddMember} onRemoveMember={handleRemoveMember} />;
+        return <GroupMembers members={members} onAddMember={handleAddMember} onRemoveMember={handleRemoveMember} t={t} />;
        case 'profile':
-        return <ProfilePage user={currentUser} onUpdateProfile={handleUpdateProfile} />;
+        return <ProfilePage user={currentUser} onUpdateProfile={handleUpdateProfile} t={t} />;
       case 'chat':
       default:
-        return <ChatInterface messages={messages} onSendMessage={handleSendMessage} isLoading={isLoading} />;
+        return <ChatInterface messages={messages} onSendMessage={handleSendMessage} isLoading={isLoading} t={t} />;
     }
   };
 
   const pageTitles: { [key in Page]: string } = {
-    chat: 'Chat Assistant',
-    assignments: 'Assignments',
-    schedule: 'Schedule',
-    group: 'Project Group',
-    profile: 'My Profile'
+    chat: t('chatAssistant'),
+    assignments: t('assignments'),
+    schedule: t('schedule'),
+    group: t('projectGroup'),
+    profile: t('myProfile')
   };
 
   if (!isAuthenticated) {
-      return <Login onLogin={handleLogin} />;
+      return <Login onLogin={handleLogin} t={t} />;
   }
 
   return (
@@ -478,14 +488,14 @@ const App: React.FC = () => {
       <aside className="w-64 bg-white dark:bg-gray-800 flex-col p-4 shadow-2xl hidden md:flex">
         <div className="flex items-center mb-8 px-2">
           <GraduationCapIcon className="h-10 w-10 text-custom-primary-light" />
-          <h1 className="ml-3 text-2xl font-bold text-gray-900 dark:text-white">Organizer AI</h1>
+          <h1 className="ml-3 text-2xl font-bold text-gray-900 dark:text-white">{t('organizerAI')}</h1>
         </div>
         <nav className="flex flex-col space-y-2">
-          <NavLink page="chat" label="Chat Assistant" icon={<ChatBubbleIcon />} />
-          <NavLink page="assignments" label="Assignments" icon={<ClipboardCheckIcon />} />
-          <NavLink page="schedule" label="Schedule" icon={<CalendarIcon />} />
-          <NavLink page="group" label="Project Group" icon={<UsersIcon />} />
-          <NavLink page="profile" label="Profile" icon={<UserIcon />} />
+          <NavLink page="chat" label={t('chatAssistant')} icon={<ChatBubbleIcon />} />
+          <NavLink page="assignments" label={t('assignments')} icon={<ClipboardCheckIcon />} />
+          <NavLink page="schedule" label={t('schedule')} icon={<CalendarIcon />} />
+          <NavLink page="group" label={t('projectGroup')} icon={<UsersIcon />} />
+          <NavLink page="profile" label={t('profile')} icon={<UserIcon />} />
         </nav>
       </aside>
 
@@ -499,14 +509,14 @@ const App: React.FC = () => {
               <button
                 onClick={toggleTheme}
                 className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-primary-light dark:focus:ring-offset-gray-800"
-                aria-label="Toggle theme"
+                aria-label={t('toggleTheme')}
               >
                 {theme === 'light' ? <MoonIcon className="h-6 w-6" /> : <SunIcon className="h-6 w-6" />}
               </button>
               <button
                 onClick={() => setIsSettingsModalOpen(true)}
                 className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-primary-light dark:focus:ring-offset-gray-800"
-                aria-label="Open notification settings"
+                aria-label={t('openNotifications')}
               >
                 <BellIcon className="h-6 w-6" />
               </button>
@@ -525,11 +535,11 @@ const App: React.FC = () => {
       {/* Bottom Navigation for mobile */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-[0_-1px_3px_rgba(0,0,0,0.1)] z-20">
           <div className="flex justify-around items-center h-16">
-              <BottomNavLink page="chat" label="Chat" icon={<ChatBubbleIcon />} />
-              <BottomNavLink page="assignments" label="Tasks" icon={<ClipboardCheckIcon />} />
-              <BottomNavLink page="schedule" label="Schedule" icon={<CalendarIcon />} />
-              <BottomNavLink page="group" label="Group" icon={<UsersIcon />} />
-              <BottomNavLink page="profile" label="Profile" icon={<UserIcon />} />
+              <BottomNavLink page="chat" label={t('chatAssistant')} icon={<ChatBubbleIcon />} />
+              <BottomNavLink page="assignments" label={t('tasks')} icon={<ClipboardCheckIcon />} />
+              <BottomNavLink page="schedule" label={t('schedule')} icon={<CalendarIcon />} />
+              <BottomNavLink page="group" label={t('group')} icon={<UsersIcon />} />
+              <BottomNavLink page="profile" label={t('profile')} icon={<UserIcon />} />
           </div>
       </nav>
 
@@ -538,6 +548,7 @@ const App: React.FC = () => {
         onClose={() => setIsSettingsModalOpen(false)}
         onSave={handleSaveNotificationSettings}
         currentSettings={notificationSettings}
+        t={t}
       />
         <AssignmentModal
             isOpen={isAssignmentModalOpen}
@@ -545,6 +556,7 @@ const App: React.FC = () => {
             onSave={handleSaveAssignment}
             assignmentToEdit={editingAssignment}
             members={members}
+            t={t}
         />
         <ScheduleModal
             isOpen={isScheduleModalOpen}
@@ -552,6 +564,7 @@ const App: React.FC = () => {
             onSave={handleSaveScheduleEvent}
             eventToEdit={editingScheduleEvent}
             members={members}
+            t={t}
         />
     </div>
   );

@@ -8,6 +8,7 @@ export interface Member {
   name: string;
   email?: string;
   profilePictureUrl?: string;
+  language?: 'en' | 'es' | 'fr';
 }
 
 export interface Assignment {

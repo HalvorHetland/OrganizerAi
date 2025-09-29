@@ -12,9 +12,10 @@ interface AssignmentListProps {
   currentUserId: number;
   onAdd: () => void;
   onEdit: (assignment: Assignment) => void;
+  t: (key: string) => string;
 }
 
-const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, onToggleComplete, onDeleteAssignment, notificationTime, currentUserId, onAdd, onEdit }) => {
+const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, onToggleComplete, onDeleteAssignment, notificationTime, currentUserId, onAdd, onEdit, t }) => {
   const [activeFilter, setActiveFilter] = useState<'all' | 'my' | 'group'>('all');
   
   const sortedAssignments = useMemo(() => 
@@ -68,9 +69,9 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, o
   );
 
   const emptyStateMessages = {
-    all: "No assignments yet. Ask the assistant to add one!",
-    my: "You have no individual tasks.",
-    group: "There are no group assignments yet."
+    all: t('emptyAssignmentsAll'),
+    my: t('emptyAssignmentsMy'),
+    group: t('emptyAssignmentsGroup'),
   };
 
   return (
@@ -78,24 +79,24 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, o
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2">
          <div className="flex items-center mb-3 sm:mb-0">
             <ClipboardCheckIcon className="h-7 w-7 sm:h-8 sm:w-8 text-custom-primary-light dark:text-custom-secondary mr-3" />
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">Assignments</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">{t('assignments')}</h2>
             <button
                 onClick={onAdd}
                 className="ml-4 p-1.5 text-white bg-custom-primary hover:bg-custom-primary-dark rounded-full transition-colors"
-                aria-label="Add new assignment"
+                aria-label={t('addNewAssignment')}
             >
                 <PlusIcon className="h-5 w-5" />
             </button>
          </div>
          <div className="flex items-center space-x-1 sm:space-x-2 bg-gray-100 dark:bg-gray-700/50 p-1 rounded-lg self-stretch sm:self-auto">
-            <FilterButton filterType="all" label="All" />
-            <FilterButton filterType="my" label="My Tasks" />
-            <FilterButton filterType="group" label="Group" />
+            <FilterButton filterType="all" label={t('all')} />
+            <FilterButton filterType="my" label={t('myTasks')} />
+            <FilterButton filterType="group" label={t('group')} />
          </div>
       </div>
        <div className="text-xs text-gray-500 dark:text-gray-400 mb-4 flex items-center pl-1">
           <BellIcon className="h-4 w-4 mr-2"/> 
-          <span>Notifications set for <b>{notificationTime.timeValue} {notificationTime.timeUnit}</b> before due date.</span>
+          <span>Notifications set for <b>{notificationTime.timeValue} {t(notificationTime.timeUnit)}</b> {t('notificationUnit')}</span>
        </div>
       <div className="space-y-4 overflow-y-auto pr-2 flex-1">
         {filteredAssignments.length > 0 ? (
@@ -126,7 +127,7 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, o
                                     {assignment.name}
                                 </p>
                                 <p className={`text-sm text-gray-500 dark:text-gray-400 ${assignment.isCompleted ? 'line-through' : ''}`}>
-                                    Due: {assignment.dueDate}
+                                    {t('due')} {assignment.dueDate}
                                 </p>
                             </div>
                         </div>
@@ -136,14 +137,14 @@ const AssignmentList: React.FC<AssignmentListProps> = ({ assignments, members, o
                                 <button
                                     onClick={() => onEdit(assignment)}
                                     className="p-1 text-gray-400 hover:text-custom-primary dark:hover:text-custom-secondary rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
-                                    aria-label={`Edit assignment: ${assignment.name}`}
+                                    aria-label={`${t('editAssignment')}: ${assignment.name}`}
                                 >
                                     <PencilIcon className="h-5 w-5" />
                                 </button>
                                 <button
                                     onClick={() => onDeleteAssignment(assignment.id)}
                                     className="p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
-                                    aria-label={`Delete assignment: ${assignment.name}`}
+                                    aria-label={`${t('deleteAssignment')}: ${assignment.name}`}
                                 >
                                     <TrashIcon className="h-5 w-5" />
                                 </button>

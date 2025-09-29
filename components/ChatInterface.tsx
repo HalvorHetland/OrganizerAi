@@ -1,6 +1,3 @@
-
-
-
 // Fix for SpeechRecognition API types not being available in default TypeScript lib
 // This addresses:
 // - "Cannot find name 'SpeechRecognition'"
@@ -55,14 +52,16 @@ interface ChatInterfaceProps {
   messages: Message[];
   onSendMessage: (message: string) => void;
   isLoading: boolean;
+  t: (key: string) => string;
 }
 
 interface ChatMessageProps {
   message: Message;
   onSpeak: (text: string) => void;
+  t: (key: string) => string;
 }
 
-const ChatMessage: React.FC<ChatMessageProps> = ({ message, onSpeak }) => {
+const ChatMessage: React.FC<ChatMessageProps> = ({ message, onSpeak, t }) => {
   const isModel = message.role === 'model';
   return (
     <div className={`flex items-end gap-2 my-4 group ${isModel ? '' : 'flex-row-reverse'}`}>
@@ -82,7 +81,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, onSpeak }) => {
             <button 
                 onClick={() => onSpeak(message.text)}
                 className="p-1.5 rounded-full text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-custom-primary-light dark:hover:text-custom-secondary opacity-0 group-hover:opacity-100 transition-opacity"
-                aria-label="Read message aloud"
+                aria-label={t('readAloud')}
             >
                 <SpeakerIcon className="h-5 w-5" />
             </button>
@@ -91,7 +90,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, onSpeak }) => {
   );
 };
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, isLoading }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, isLoading, t }) => {
   const [input, setInput] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [isAutoTTSOn, setIsAutoTTSOn] = useState(true);
@@ -187,15 +186,15 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
     <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg h-full flex flex-col">
       <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Chat Assistant</h2>
-          <p className="text-gray-500 dark:text-gray-400">How can I help you organize your day?</p>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{t('chatAssistant')}</h2>
+          <p className="text-gray-500 dark:text-gray-400">{t('chatSubheader')}</p>
         </div>
         <button
             onClick={() => setIsAutoTTSOn(!isAutoTTSOn)}
             className={`p-2 rounded-full transition-colors ${
                 isAutoTTSOn ? 'bg-custom-background-light dark:bg-custom-primary/40 text-custom-primary dark:text-custom-secondary' : 'text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-700'
             }`}
-            aria-label={isAutoTTSOn ? 'Disable automatic speech' : 'Enable automatic speech'}
+            aria-label={isAutoTTSOn ? t('disableSpeech') : t('enableSpeech')}
         >
             <SpeakerIcon className="h-6 w-6" />
         </button>
@@ -203,7 +202,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
 
       <div className="flex-1 p-6 overflow-y-auto">
         {messages.map((msg, index) => (
-          msg.role !== 'tool' && <ChatMessage key={index} message={msg} onSpeak={speak} />
+          msg.role !== 'tool' && <ChatMessage key={index} message={msg} onSpeak={speak} t={t} />
         ))}
         {isLoading && (
             <div className="flex items-start gap-3 my-4">
@@ -227,7 +226,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
             className={`p-3 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-primary-light transition-colors ${
                 isListening ? 'text-red-500 animate-pulse' : 'text-gray-600 dark:text-gray-300'
             }`}
-            aria-label="Use microphone"
+            aria-label={t('useMic')}
           >
             <MicrophoneIcon className="h-6 w-6" />
           </button>
@@ -235,7 +234,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ messages, onSendMessage, 
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={isListening ? "Listening..." : "Ask me to add an assignment..."}
+            placeholder={isListening ? t('listening') : t('askPlaceholder')}
             className="flex-1 p-3 bg-gray-100 dark:bg-gray-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-custom-primary-light text-gray-900 dark:text-white"
             disabled={isLoading}
           />

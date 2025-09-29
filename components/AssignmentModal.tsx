@@ -8,9 +8,10 @@ interface AssignmentModalProps {
   onSave: (assignment: Omit<Assignment, 'id' | 'isCompleted'> & { id?: number }) => void;
   assignmentToEdit?: Assignment | null;
   members: Member[];
+  t: (key: string) => string;
 }
 
-const AssignmentModal: React.FC<AssignmentModalProps> = ({ isOpen, onClose, onSave, assignmentToEdit, members }) => {
+const AssignmentModal: React.FC<AssignmentModalProps> = ({ isOpen, onClose, onSave, assignmentToEdit, members, t }) => {
   const [name, setName] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [assigneeIds, setAssigneeIds] = useState<number[]>([]);
@@ -68,7 +69,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({ isOpen, onClose, onSa
           <div className="flex items-center">
             <ClipboardCheckIcon className="h-6 w-6 text-custom-primary-light mr-3" />
             <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-              {assignmentToEdit ? 'Edit Assignment' : 'Add Assignment'}
+              {assignmentToEdit ? t('editAssignment') : t('addAssignment')}
             </h2>
           </div>
           <button
@@ -83,7 +84,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({ isOpen, onClose, onSa
         <form onSubmit={handleSubmit}>
             <div className="space-y-4">
                 <div>
-                    <label htmlFor="assignment-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Assignment Name</label>
+                    <label htmlFor="assignment-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('assignmentName')}</label>
                     <input
                         type="text"
                         id="assignment-name"
@@ -94,7 +95,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({ isOpen, onClose, onSa
                     />
                 </div>
                 <div>
-                    <label htmlFor="due-date" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Due Date</label>
+                    <label htmlFor="due-date" className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('dueDate')}</label>
                     <input
                         type="date"
                         id="due-date"
@@ -105,7 +106,7 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({ isOpen, onClose, onSa
                     />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Assign To</label>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('assignTo')}</label>
                     <div className="mt-2 space-y-2 p-2 bg-gray-100 dark:bg-gray-700 rounded-lg max-h-40 overflow-y-auto">
                         {members.map(member => (
                             <div key={member.id} className="flex items-center">
@@ -129,13 +130,13 @@ const AssignmentModal: React.FC<AssignmentModalProps> = ({ isOpen, onClose, onSa
                     onClick={onClose}
                     className="px-4 py-2 rounded-lg text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500"
                 >
-                    Cancel
+                    {t('cancel')}
                 </button>
                 <button
                     type="submit"
                     className="px-4 py-2 rounded-lg text-white bg-custom-primary hover:bg-custom-primary-dark"
                 >
-                    {assignmentToEdit ? 'Save Changes' : 'Add Assignment'}
+                    {assignmentToEdit ? t('saveChangesBtn') : t('addAssignmentBtn')}
                 </button>
             </div>
         </form>

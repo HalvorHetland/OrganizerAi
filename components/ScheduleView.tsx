@@ -10,9 +10,10 @@ interface ScheduleViewProps {
   onAdd: () => void;
   onEdit: (event: ScheduleEvent) => void;
   notificationTime: NotificationTime;
+  t: (key: string) => string;
 }
 
-const ScheduleView: React.FC<ScheduleViewProps> = ({ events, members, onDeleteEvent, onAdd, onEdit, notificationTime }) => {
+const ScheduleView: React.FC<ScheduleViewProps> = ({ events, members, onDeleteEvent, onAdd, onEdit, notificationTime, t }) => {
     const sortedEvents = [...events].sort((a, b) => {
         const dateA = new Date(`${a.date}T${a.time}`);
         const dateB = new Date(`${b.date}T${b.time}`);
@@ -55,11 +56,11 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ events, members, onDeleteEv
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-2">
          <div className="flex items-center mb-3 sm:mb-0">
             <CalendarIcon className="h-7 w-7 sm:h-8 sm:w-8 text-custom-primary-light dark:text-custom-secondary mr-3" />
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">Schedule</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 dark:text-white">{t('schedule')}</h2>
             <button
                 onClick={onAdd}
                 className="ml-4 p-1.5 text-white bg-custom-primary hover:bg-custom-primary-dark rounded-full transition-colors"
-                aria-label="Add new event"
+                aria-label={t('addNewEvent')}
             >
                 <PlusIcon className="h-5 w-5" />
             </button>
@@ -67,7 +68,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ events, members, onDeleteEv
       </div>
       <div className="text-xs text-gray-500 dark:text-gray-400 mb-4 flex items-center pl-1">
           <BellIcon className="h-4 w-4 mr-2"/> 
-          <span>Notifications set for <b>{notificationTime.timeValue} {notificationTime.timeUnit}</b> before event.</span>
+          <span>Notifications set for <b>{notificationTime.timeValue} {t(notificationTime.timeUnit)}</b> {t('notificationUnitEvent')}</span>
        </div>
       <div className="space-y-4 overflow-y-auto pr-2 flex-1">
         {sortedEvents.length > 0 ? (
@@ -95,14 +96,14 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ events, members, onDeleteEv
                         <button
                             onClick={() => onEdit(event)}
                             className="p-1 text-gray-400 hover:text-custom-primary dark:hover:text-custom-secondary rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
-                            aria-label={`Edit event: ${event.title}`}
+                            aria-label={`${t('editEvent')}: ${event.title}`}
                         >
                             <PencilIcon className="h-5 w-5" />
                         </button>
                         <button
                             onClick={() => onDeleteEvent(event.id)}
                             className="p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600"
-                            aria-label={`Delete event: ${event.title}`}
+                            aria-label={`${t('deleteEvent')}: ${event.title}`}
                         >
                             <TrashIcon className="h-5 w-5" />
                         </button>
@@ -120,7 +121,7 @@ const ScheduleView: React.FC<ScheduleViewProps> = ({ events, members, onDeleteEv
           })
         ) : (
           <p className="text-center text-gray-500 dark:text-gray-400 py-8">
-            Your schedule is empty. Ask the assistant to add an event.
+            {t('emptySchedule')}
           </p>
         )}
       </div>

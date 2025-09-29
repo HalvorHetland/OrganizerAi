@@ -7,6 +7,7 @@ interface NotificationSettingsModalProps {
   onClose: () => void;
   onSave: (newSettings: NotificationSettings) => void;
   currentSettings: NotificationSettings;
+  t: (key: string) => string;
 }
 
 const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
@@ -14,6 +15,7 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
   onClose,
   onSave,
   currentSettings,
+  t,
 }) => {
   const [settings, setSettings] = useState(currentSettings);
 
@@ -62,13 +64,13 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
           <div className="flex items-center">
             <BellIcon className="h-6 w-6 text-custom-primary-light mr-3" />
             <h2 id="modal-title" className="text-2xl font-bold text-gray-800 dark:text-white">
-              Notification Settings
+              {t('notificationSettings')}
             </h2>
           </div>
           <button 
             onClick={onClose} 
             className="p-1 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-primary-light dark:focus:ring-offset-gray-800"
-            aria-label="Close settings"
+            aria-label={t('closeSettings')}
           >
             <CloseIcon className="h-6 w-6" />
           </button>
@@ -77,9 +79,9 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
         <div className="space-y-6">
           {/* Assignment Settings */}
           <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-             <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Assignment Deadlines</h3>
+             <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">{t('assignmentDeadlines')}</h3>
              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                Set when to be reminded about assignment deadlines.
+                {t('assignmentDeadlinesDesc')}
              </p>
              <div className="flex items-center mt-2 space-x-3">
                 <input
@@ -94,17 +96,17 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                   onChange={handleAssignmentUnitChange}
                   className="p-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-primary-light text-gray-900 dark:text-white"
                 >
-                  <option value="days">Days</option>
-                  <option value="hours">Hours</option>
+                  <option value="days">{t('days')}</option>
+                  <option value="hours">{t('hours')}</option>
                 </select>
             </div>
           </div>
           
            {/* Schedule Settings */}
           <div className="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-             <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">Schedule Events</h3>
+             <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2">{t('scheduleEvents')}</h3>
              <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                Set when to be reminded about upcoming events.
+                {t('scheduleEventsDesc')}
              </p>
              <div className="flex items-center mt-2 space-x-3">
                 <input
@@ -119,9 +121,9 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
                   onChange={handleScheduleUnitChange}
                   className="p-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-custom-primary-light text-gray-900 dark:text-white"
                 >
-                  <option value="days">Days</option>
-                  <option value="hours">Hours</option>
-                  <option value="minutes">Minutes</option>
+                  <option value="days">{t('days')}</option>
+                  <option value="hours">{t('hours')}</option>
+                  <option value="minutes">{t('minutes')}</option>
                 </select>
             </div>
           </div>
@@ -132,13 +134,13 @@ const NotificationSettingsModal: React.FC<NotificationSettingsModalProps> = ({
             onClick={onClose}
             className="px-4 py-2 rounded-lg text-gray-700 dark:text-gray-200 bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 dark:focus:ring-offset-gray-800"
           >
-            Cancel
+            {t('cancel')}
           </button>
           <button
             onClick={handleSave}
             className="px-4 py-2 rounded-lg text-white bg-custom-primary hover:bg-custom-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-custom-primary-light dark:focus:ring-offset-gray-800"
           >
-            Save Settings
+            {t('saveSettings')}
           </button>
         </div>
       </div>
